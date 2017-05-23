@@ -96,8 +96,10 @@ export function discoverDevice(services = [], filter = function(device){return t
 
 在开发的过程中，遇到几个问题：
 
-1. Native代码如何与Javascript通信
+1. [Native代码如何与Javascript通信]: #native代码如何与javascript通信
+
 2. 如何简化使用方式，使得使用者能够方便上手
+
 3. 如何保证接口的灵活性
 
 下面一个一个来讲。
