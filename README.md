@@ -1,11 +1,5 @@
 # BY Blog
 
-这个README我直接拿[Hux](https://github.com/Huxpro/huxpro.github.io)的来修改了。😅
-### [我的博客在这里 &rarr;](http://qiubaiying.github.io)
-
-![](https://raw.githubusercontent.com/qiubaiying/qiubaiying.github.io/master/img/readme-home.png)
-
-
 ## 使用
 
 * 开始
