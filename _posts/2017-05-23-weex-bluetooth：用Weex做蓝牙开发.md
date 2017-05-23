@@ -96,21 +96,21 @@ export function discoverDevice(services = [], filter = function(device){return t
 
 在开发的过程中，遇到几个问题：
 
-1. Native代码如何与Javascript通信
-2. 如何简化使用方式，使得使用者能够方便上手
-3. 如何保证接口的灵活性
+1. [Native代码如何与Javascript通信](#Native代码如何与Javascript通信)
+2. [如何简化使用方式，使得使用者能够方便上手](#如何简化使用方式，使得使用者能够方便上手)
+3. [如何保证接口的灵活性](#如何保证接口的灵活性)
 
 下面一个一个来讲。
 
 ## Native代码如何与Javascript通信
 
-因为是在Weex框架下开发，所以用到了Weex给的方法。Weex官方给出了互相调用的方法，即`WXModuleCallback`和`WXModuleKeepAliveCallback`。这两者的区别在于，`WXModuleKeepAliveCallback`可以被作为变量保存下来，长期使用。具体的文档在这里：http://weex.apache.org/cn/references/ios-apis.html
+因为是在Weex框架下开发，所以用到了Weex给的方法。Weex官方给出了互相调用的方法，即`WXModuleCallback`和`WXModuleKeepAliveCallback`。这两者的区别在于，`WXModuleKeepAliveCallback`可以被作为变量保存下来，长期使用。具体的文档在这里：[http://weex.apache.org/cn/references/ios-apis.html](http://weex.apache.org/cn/references/ios-apis.html)
 
 Weex还提供了一种global event方式的通信，本项目没有采用。考虑到可能会有连接多台设备、以及其它复杂情况，global event可能难以处理，并且native端使用的delegate，很适合用callback的方式，因此整个实现过程都不用global event。
 
 native端的接口设计，模仿了微信小程序的蓝牙接口设计方式。由于Weex通信方式的限制，做了一定的调整。
 
-微信小程序的蓝牙接口文档在这里：https://mp.weixin.qq.com/debug/wxadoc/dev/api/bluetooth.html
+微信小程序的蓝牙接口文档在这里：[https://mp.weixin.qq.com/debug/wxadoc/dev/api/bluetooth.html](https://mp.weixin.qq.com/debug/wxadoc/dev/api/bluetooth.html)
 
 ##  如何简化使用方式，使得使用者能够方便上手
 
@@ -184,9 +184,9 @@ const wx = weex.requireModule('wx-ble');
 
 蓝牙开发中的概念还是蛮多的，开发过程中有一些一般情况下其实用不到，比如蓝牙设备的信号强度等。所以我在设计的时候，从实用的角度考虑，简化了一些数据的格式，保留了主要的数据，以使得开发起来更加方便。在一些关键的地方，我保留了自定义的接口，比如过滤设备、过滤service等。这样一般在开发基本上已经算是足够了。
 
-设计接口的时候，受到了Web Bluetooth API的启发，它的实现方式也是Promise。有兴趣的可以了解一下：https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web
+设计接口的时候，受到了Web Bluetooth API的启发，它的实现方式也是Promise。有兴趣的可以了解一下：[https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web)
 
-另外，在设计接口的时候，也参考了BabyBluetooth这个项目：https://github.com/coolnameismy/BabyBluetooth
+另外，在设计接口的时候，也参考了BabyBluetooth这个项目：[https://github.com/coolnameismy/BabyBluetooth](https://github.com/coolnameismy/BabyBlueto)
 
 # 不足和计划
 
