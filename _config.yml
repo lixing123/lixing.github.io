@@ -1,13 +1,13 @@
 # Site settings
 title: BY Blog
-SEOTitle: 上网玩玩的博客 | BY Blog
+SEOTitle: 彳亍而行 | xing's blog
 header-img: img/post-bg-desk.jpg
 email: shangwangwanwan@gmail.com
-description: "一个小博客"
-keyword: "上网玩玩的博客, iOS"
+description: "彳亍而行"
+keyword: "彳亍而行, iOS"
 url: "http://lixing.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
-github_repo: "https://github.com/qiubaiying/lixing.github.io.git" # you code repository
+github_repo: "https://github.com/qiubaiying/chichu.github.io.git" # you code repository
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
@@ -19,12 +19,8 @@ sidebar-avatar: img/avatar-by.jpg      # use absolute URL, seeing it's used in b
 # SNS settings
 RSS: false
 # weibo_username:     qiubaiying
-zhihu_username:     qiubaiying
-github_username:    qiubaiying
-facebook_username:  baiying.qiu.7
-jianshu_username:   e71990ada2fd
-#twitter_username:   qiubaiying
-
+zhihu_username:     lixing123
+github_username:    lixing123
 
 
 
