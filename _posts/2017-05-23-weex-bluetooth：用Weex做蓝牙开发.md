@@ -14,7 +14,7 @@ tags:
 
 之所以做这个项目，是因为公司要尝试用Weex做开发，以减少开发工作量，达到一个人搞定前端的目标。设想当中，如果顺利的话，一个人可以同时搞定iOS/Android两端的开发，尤其是UI方面的开发。传统的工作方式中，同一个UI设计需要iOS/Android两个平台实现基本一致的开发，非常浪费。
 
-在此过程中，因为业务需要，要能够连接蓝牙设备，而Weex本身（基本上）只提供UI层的封装。为了也能够达到一次开发，两个平台同时运行的目标，我设计开发了供Weex调用的蓝牙库。地址在这里：https://github.com/lixing123/weex-bluetooth
+在此过程中，因为业务需要，要能够连接蓝牙设备，而Weex本身（基本上）只提供UI层的封装。为了也能够达到一次开发，两个平台同时运行的目标，我设计开发了供Weex调用的蓝牙库。地址在这里：[https://github.com/lixing123/weex-bluetooth](https://github.com/lixing123/weex-bluetooth)
 
 # Project的优点
 
