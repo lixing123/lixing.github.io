@@ -1,0 +1,38 @@
+---
+author: lixing123
+comments: true
+date: 2014-12-04 14:30:44+00:00
+layout: post
+link: http://127.0.0.1/lixing123.com/?p=285
+slug: '%e7%ae%97%e6%b3%95%e4%bc%98%e5%8c%96%ef%bc%9a%e4%bb%8e1%e5%a4%a9%e5%88%b01s'
+title: 算法优化：从1天到1s
+wordpress_id: 285
+---
+
+最近参加了Coursera的课程，Stanford大学的《算法：设计与分析》。这是一门非常值得学习的课程。在老师布置的作业中，有这样一道题目：<!-- more -->
+
+The goal of this problem is to implement a variant of the 2-SUM algorithm .
+
+The file contains 1 million integers, both positive and negative (there might be some repetitions!).This is your array of integers, with the ith row of the file specifying the ith entry of the array.
+
+Your task is to compute the number of target values t in the interval [-10000,10000] (inclusive) such that there are _distinct_ numbers x,yin the input file that satisfy x+y=t. (NOTE: ensuring distinctness requires a one-line addition to the algorithm from lecture.)
+
+Write your numeric answer (an integer between 0 and 20001) in the space provided.
+
+题目所提供的包含100万个integer的文件，我已经上传到这个github项目里-->[点这里](https://github.com/lixing123/2-Sum)。这个项目就是此问题的Objective-C代码实现。
+
+这是一种2-Sum问题。要解决这个问题，首先跳到我脑子中的，是最brute force的方法：遍历。将所有100万个integer都相互加一次，然后把它们的结果保存下来。这种做法简单粗暴，而且无效。因为它的渐近时间复杂度为O(n^2)，具体到这个问题上，需要计算的次数至少为1,000,000^2=10^12。我试过运行这种brute force的程序，大概每0.1s可以针对某一个integer计算出所有其它数与它的和。所以大概需要1000000/3600/10>25小时，所以行不通。
+
+我想到，既然题目要求的是，将结果在-10000~10000范围的记下来，也就是说，对于任意一个数x，只需要计算范围在-x+10000~-x-10000之内的数就可以了，可以先将所有这1000000个数排序。渐近时间复杂度在O(nlog(n))的排序算法有好几个，我选了一个之前实现过的merge sort算法。从理论上来说，这种算法应该是比较快的，但不知道是代码出错还是其他的原因，速度很快，5分钟之内没有结果。而且，这种方法也比较麻烦，即使排序好了，也需要各种指针，每计算一个数，就需要重新计算与之相加的数的范围，容易出错。
+
+后来我又想到一种方法：首先我发现了，这些所有的数，它们的最小值是-99,999,887,310，最大 值是99,999,662,302，也就是在-10^11~1-^11之间。那么，我把所有这100万个数，放入5,000,000个数组中。对于一个数x,x/20000=i，就将x放到第i个数组中。比如，group[0]放的是-20,000~20,000的数，group[1]放的是-40,000~-20,000以及20,000~40,000。
+
+那么对于group[1]里的任何一个数，都只需要计算它和顶多2个group里的数的和。比如，对于25,000，需要计算它和-35,000~-15,000的和，而这些数都包含在group[0]和group[1]里。
+
+而且，integer的总数为1,000,000，而group却有5,000,000个，也就是说，绝大多数group里都只有0个或1个数，计算量会大大减少，渐近时间复杂度是O(n)。
+
+而实际上，这种方法的速度也非常快：只用了大概1s左右的时间。
+
+这就是我将一个问题的算法的运行时间，从超过1天，减少到1s左右的过程。
+
+实现代码在这里：[点这里](https://github.com/lixing123/2-Sum)。由于做的是iOS开发，所以用Objective-C实现了。

@@ -1,0 +1,72 @@
+---
+author: lixing123
+comments: true
+date: 2014-10-21 10:03:54+00:00
+layout: post
+link: http://127.0.0.1/lixing123.com/?p=273
+slug: '%e7%94%a8audiobuffer%e9%87%8c%e7%9a%84%e6%95%b0%e6%8d%ae%e5%be%97%e5%88%b0%e9%9f%b3%e9%87%8f'
+title: 用AudioBuffer里的数据得到音量
+wordpress_id: 273
+---
+
+在iOS里，录音、播放最简单的方法，就是使用AVAudioRecorder和AVAudioPlayer。这两个类也可以轻松得到当前音量：<!-- more -->
+
+在init时：
+
+recorder.meteringEnabled = YES
+
+在录音、播放时：
+
+[recorder updateMeters];
+
+[recorder averagePowerForChannel:0];
+
+然而这两个类层级太高，我们只能用苹果开放给我们的接口；对于一些更底层的东西，比如拿到声音的samples，一边录音一边播放等，都无法搞定。这时候，可以使用AudioQueue，AudioUnit等，配合AVAudioSession等使用，此处不表。下面专讲用AudioQueue方法拿到声音数据之后，如何将这些samples转化成音量。
+
+使用AudioQueue录音时，回调方法中可以得到一个AudioBufferList类型的数据，每个frame里有inNumberFrames个数据，有inNumberChannels个channel。inNumberFrames*inNumberChannels的结果，就是AudioBufferList其中一个buffer里的数据量。
+
+AudioBufferList里的buffer里面的数据，根据设置不同，有可能是0-1的float类型，也有可能是int类型，如果是int类型，需要转化为0-1的float类型。
+
+根据这些数据计算音量，需要用到vDSP库，这个库已经封装了很多快速计算的方法，不需要我们自己去实现。计算代码如下：
+
+float* data = (float*)malloc(inputBuffer->mBuffers[0].mDataByteSize*sizeof(float));
+
+(memcpy(data, (float *)inputBuffer->mBuffers[0].mData, inputBuffer->mBuffers[0].mDataByteSize);)//初始化data
+
+
+vDSP_vsq(data, 1, data, 1, numFrames*numChannels);
+
+
+
+
+float meanVal = 0.0;
+
+
+
+
+vDSP_meanv(data, 1, &meanVal, numFrames*numChannels);
+
+
+
+
+float one = 1.0;
+
+
+
+
+vDSP_vdbcon(&meanVal, 1, &one, &meanVal, 1, 1, 0);
+
+
+
+
+float decibel = meanVal;
+
+
+
+
+这里，decibel就是音量。音量大小以0为最大，-60为最小。
+
+
+
+
+各vDSP方法代表的含义，可以查询苹果官方文档：https://developer.apple.com/library/mac/documentation/Accelerate/Reference/vDSPRef/index.html

@@ -1,0 +1,58 @@
+---
+author: lixing123
+comments: true
+date: 2014-04-28 04:55:32+00:00
+layout: post
+link: http://127.0.0.1/lixing123.com/?p=265
+slug: '%e4%b8%8a%e7%ba%bfios%e5%ba%94%e7%94%a8%e7%9a%84crash%e6%a3%80%e6%9f%a5%e6%96%b9%e6%b3%95'
+title: 上线iOS应用的crash检查方法
+wordpress_id: 265
+---
+
+iOS应用上线之后，很容易出现一些报错问题，比如：闪退！这时候，不太方便进行bug定位和调试。经过研究，使用友盟的crash收集系统，加上本地开发环境的操作，能定位很多crash的地址。<!-- more -->
+
+友盟后台的“错误分析”里，收集了用户应用crash的信息：
+
+[![屏幕快照 2014-04-28 11.52.46](http://lixing123.com/wp-content/uploads/2014/04/屏幕快照-2014-04-28-11.52.46-1024x160.png)](http://lixing123.com/wp-content/uploads/2014/04/屏幕快照-2014-04-28-11.52.46.png) 点进去之后，发现看不懂。。。
+
+[![屏幕快照 2014-04-28 11.56.00](http://lixing123.com/wp-content/uploads/2014/04/屏幕快照-2014-04-28-11.56.00-1024x368.png)](http://lixing123.com/wp-content/uploads/2014/04/屏幕快照-2014-04-28-11.56.00.png)
+
+
+
+只有“data parameter is nil”能看懂，但这显然是无法定位到bug的位置的。下面一行一行的代码，怎么转换成代码定位呢？
+
+1、首先看，这个bug出现的应用，其版本是3.0：
+
+[![屏幕快照 2014-04-28 11.59.23](http://lixing123.com/wp-content/uploads/2014/04/屏幕快照-2014-04-28-11.59.23-1024x178.png)](http://lixing123.com/wp-content/uploads/2014/04/屏幕快照-2014-04-28-11.59.23.png)
+
+我们的应用在上传到App Store的时候，需要将应用打包成Archive，然后再到 Organizer里上传到App Store。找到对应的成功上传的3.0版本的Archive，Show In Finder-显示包内容，找到里面的两个文件：DSYM和.app文件，拿出来放到一个专门的地方。DSYM文件和crash report一起用的，此处不表。实际上，在本文的环境下，只需要一个.app文件就可以了。
+
+在命令行中进入.app文件所在目录，然后输入下面的命令：
+
+
+atos -arch armv7 -o baby.app/baby 0x60109
+
+
+
+
+打印出来的结果是：
+
+
+
+
+-[InfoViewController getFood] (in yourApp) (InfoViewController.m:292)
+
+
+
+
+好了，bug定位成功，连多少行都能看到。
+
+
+
+
+关于dsym的其他使用方式，继续研究。有兴趣可以看看Apple的官方文档：
+
+
+
+
+[https://developer.apple.com/library/ios/technotes/tn2151/_index.html](http://https://developer.apple.com/library/ios/technotes/tn2151/_index.html)

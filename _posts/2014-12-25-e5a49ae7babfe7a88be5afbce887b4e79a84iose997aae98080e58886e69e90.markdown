@@ -1,0 +1,109 @@
+---
+author: lixing123
+comments: true
+date: 2014-12-25 10:02:06+00:00
+layout: post
+link: http://127.0.0.1/lixing123.com/?p=292
+slug: '%e5%a4%9a%e7%ba%bf%e7%a8%8b%e5%af%bc%e8%87%b4%e7%9a%84ios%e9%97%aa%e9%80%80%e5%88%86%e6%9e%90'
+title: 多线程导致的iOS闪退分析
+wordpress_id: 292
+---
+
+前段时间做了一个APP，在测试的时候遇到了很奇怪的闪退情况。<!-- more -->
+
+这个APP是有关声音处理的：设备一边录音，一边对声音进行处理。所以需要2个线程，一个线程将录音保存下来，另一个处理保存下来的声音。测试的时候，会在1~10min之内，不定时、无预兆的出现闪退的情况，报的错也各不一样，有的是
+
+1)"NSGenericException 'Collection was mutated while being enumerated"
+
+或者：
+
+2)"pointer being freed was not allocated"
+
+还有的闪退信息提示内存用的太多：
+
+3)"crash due to memory pressure"
+
+更有的打出了天书：
+
+4)"First throw call stack:
+
+(0x30170ecb 0x3a907ce7 0x301709b9 0x4a177 0x40a97 0x30b5bab5 0x3013bf0f 0x3013bb2b 0x30139eb3 0x300a4729 0x300a450b 0x350036d3 0x32a05871 0x4f4b9 0x3ae05ab7)"
+
+而时间要求又比较急，真是有点焦头烂额。经过1天多的研究，这些问题被一一搞定。
+
+首先，第3条，明显是生成了内存而没有释放。咦，Objective-C不是有ARC吗，自动处理内存啊，好长时间都没有因为内存烦恼了。但是声音的处理都是比较底层的，用的都是C语言，对这部分的内存，ARC就爱莫能助了。处理起来也不麻烦了，先用Instruments定位一下，哪边泄漏的内存，然后对所有malloc出来的内存块，用完了都free掉。再试一下，内存的增加果然慢下来了。
+
+第1条，"Collection was mutated while being enumerated"，意思是，一个对象(一般是NSArray什么的)在被访问的时候，这个对象发生了变化，导致程序挂掉了。在我的程序里，这个对象就是存储声音数据的东西，暂且叫它data。第1个线程会源源不断的向data里写入新数据，并将旧数据删掉。而第2个线程，则会定时读取data的内容并做处理。因为这两个线程每次操作data的时间都比较短，所以它们同时操作的情况不是很常见，所以一般程序也能坚持个几分钟。然而它们一旦同时对data进行操作/访问，程序就挂了。
+
+解决方法也很简单，Objective-C里有一个语法，专门处理这样的事：@synchronized(参数){代码块}
+
+当两个@synchronized代码块的参数相同的时候，这两个代码块是不能同时操作的。对于参数，我们经常使用self来做参数。例如：
+
+线程1：
+
+@synchronized(self){
+
+//写data
+
+}
+
+线程2：
+
+@synchronized(self){
+
+//读data
+
+}
+
+当线程1在写data时，线程2只能等着。这样就避免了同时多线程同时读/写global数据块会出现的闪退问题。
+
+第2条，"pointer being freed was not allocated"，也是因为多线程同时写data的问题，但有一些特殊。data里只包含了最近一段时间的声音数据，当data存储的太多了，就会先将旧数据删了，再将新数据存起来。问题是线程1的调用次数非常快，达到1秒钟50次。有时候上一次调用a还没结束，下一次调用b又过来了，这时候就可能会出问题：a检测到data里的数据太多了，就将最旧的数据删了。然而没等a真正将数据删除，b又来了，它也要将最旧的数据删了，这样同一个数据就要被free两次，编译器就要叫：尼码这个指针里已经空了，你还要老子再free它，老子不干了！
+
+解决方法同上，也加一个@synchronized，将这段数据块包起来，告诉编译器：为了保证服务质量，每次只向一个线程提供服务，等上一位大爷舒坦了，再让下一个进来。
+
+最后，有时候编译器还会抽风，只告诉你，"我要挂了！"(EXC_BAD_ACCESS)，然后呕吐出一大堆排泄物：
+
+"First throw call stack:
+
+(0x30170ecb 0x3a907ce7 0x301709b9 0x4a177 0x40a97 0x30b5bab5 0x3013bf0f 0x3013bb2b 0x30139eb3 0x300a4729 0x300a450b 0x350036d3 0x32a05871 0x4f4b9 0x3ae05ab7)"
+
+作为程序员，我们要从这堆排泄物中找到编译器的病因，看看它到底吃了啥：
+
+在AppDelegate.m里加入这个函数：
+
+void uncaughtExceptionHandler(NSException *exception) {
+
+NSLog(@"CRASH: %@", exception);
+
+NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+
+//Internal error reporting
+
+}
+
+然后：
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+
+}
+
+这样，当编译器挂了的时候，就会打印出这样的东西：
+
+0   CoreFoundation                      0x30c16f9b <redacted> + 154,
+1   libobjc.A.dylib                     0x3b491ccf objc_exception_throw + 38,
+2   CoreFoundation                      0x30b4da39 <redacted> + 176,
+3   TEST                    0x001ce2c9 -[TestBaseViewController viewDidLoad] + 848,
+
+我们就能看到，问题出在[TestBaseViewController viewDidLoad]函数里(请忽略后面的+848，我不知道是什么意思，貌似也没人知道)。虽然无法定位到具体哪一行，但至少是大大缩小的范围。
+
+另外，还有一个关于崩溃定位的小技巧：在所有你怀疑会出现闪退的地方附近，疯狂的NSLog，这样，当闪退的时候，很快就能定位到在哪个位置闪退了。
+
+对于程序员来说，定位到问题意味着问题解决了90%。
+
+
+
+
+
+
