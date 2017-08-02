@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "About"
-description: "Hey, this is chichuerxing."
+description: "Hey, this is chichu."
 header-img: "img/home-bg-o.jpg"
 ---
 
@@ -18,34 +18,17 @@ header-img: "img/home-bg-o.jpg"
 
     <p>Hey，我是<strong>彳亍而行</strong>，一个位于南京的developer。</p>
 
-    <p>这是我的利用 <a href="https://pages.github.com/">GitHub Pages</a> 与 <a href="http://jekyll.com.cn/">Jekyll</a> 搭建的 个人博客。我在GitHub主页<a href="https://github.com/lixing123">👉GitHub·chichu</a>。</p>
+    <p>这是我的利用 <a href="https://pages.github.com/">GitHub Pages</a> 与 <a href="http://jekyll.com.cn/">Jekyll</a> 搭建的个人博客。我在GitHub主页<a href="https://github.com/lixing123">👉GitHub·chichu</a>。</p>
     
-    <h5>Talks</h5>
-
-    <ul>
-    <li><a href="https://github.com">GitHub</a></li>
-    <li><a href="http://jekyll.com.cn/">jekyll</a></li>
-    <li><a href="https://pages.github.com/">GitHub Pages</a></li>
-    <li><a href="https://lixing123.github.io">chichu</a></li>    </ul>
 </div>
 
 <!-- English Version -->
 <div class="en post-container">
-    <blockquote><p>Yet another iOS Developer. <br>
-    Yet another Life-long Student.</p></blockquote>
 
     <p>Hi, I am <strong>chichu</strong>. I'm an iOS Developer. I now work in Nanjing, China.</p>
 
-    <p>This is my personal blog, through making Github Pages and Jekyll.My GitHub  👉 <a href="http://github.com/lixing123">Github·chichu</a>.</p>
-    
-    <h5>Talks</h5>
+    <p>This is my personal blog, through making Github Pages and Jekyll. My GitHub  👉 <a href="https://github.com/lixing123">Github·chichu</a>.</p>
 
-    <ul>
-    <li><a href="https://github.com">GitHub</a></li>
-    <li><a href="http://jekyll.com.cn/">jekyll</a></li>
-    <li><a href="https://pages.github.com/">GitHub Pages</a></li>
-    <li><a href="https://lixing123.github.io">chichu</a></li>
-    </ul>
 </div>
 
 <!-- Handle Language Change -->
@@ -87,29 +70,3 @@ header-img: "img/home-bg-o.jpg"
     // init
     _render();
 </script>
-
-
-{% if site.disqus_username %}
-<!-- disqus 评论框 start -->
-<div class="comment">
-    <div id="disqus_thread" class="disqus-thread">
-
-    </div>
-</div>
-<!-- disqus 评论框 end -->
-
-<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "{{site.disqus_username}}";
-    var disqus_identifier = "{{site.disqus_username}}/{{page.url}}";
-    var disqus_url = "{{site.url}}{{page.url}}";
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus 公共JS代码 end -->
-{% endif %}
