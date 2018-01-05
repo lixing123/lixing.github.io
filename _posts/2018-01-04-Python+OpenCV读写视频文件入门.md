@@ -107,3 +107,11 @@ videoWriter.release()
 
 原视频如下：
 
+<video>
+
+<source src="https://github.com/lixing123/lixing123.github.io/blob/master/img/opencv_video_read_write_output.avi?raw=true" type="video/mp4">
+
+</video>
+
+
+
