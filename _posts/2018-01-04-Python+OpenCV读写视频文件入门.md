@@ -111,13 +111,9 @@ videoWriter.release()
 
 啊，实在搞不定在markdown里面嵌入视频，自己看吧。
 
-原视频地址：
+原视频地址：[点这里](https://github.com/lixing123/lixing123.github.io/blob/master/img/opencv_video_read_write_output.avi?raw=true)
 
-https://github.com/lixing123/lixing123.github.io/blob/master/img/opencv_video_read_write_output.avi?raw=true
-
-处理后的视频地址：
-
-https://github.com/lixing123/lixing123.github.io/blob/master/img/opencv_video_read_write_test.mp4?raw=true
+处理后的视频地址：[点这里](https://github.com/lixing123/lixing123.github.io/blob/master/img/opencv_video_read_write_test.mp4?raw=true)
 
 有没有看到那个移动的小红点？就是代码实现的结果。
 
